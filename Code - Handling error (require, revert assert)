@@ -1,29 +1,30 @@
 // SPDX-License-Identifier: MIT
-pragma solidity >=0.6.12 <0.9.0;
+pragma solidity ^0.8.17;
 
-contract Payment { 
-    uint public balance; 
-    uint public constant MAX_UINT = 10000; 
+contract PurchaseAlcohol { 
 
-    function deposit(uint _amount) public { 
 
-        require(_amount >1, "invalid amount"); 
+    uint256 public constant legalDrinkingAge = 18; 
+    address public owner; 
 
-        balance += _amount; 
 
+    event PurchaseAttempt(address buyer, uint256 age, bool approved); 
+ 
+
+    constructor() { 
+        owner = msg.sender; 
     }
 
-    function withdraw(uint _amount) public { 
 
-        require(balance >= _amount, "Insufficient balance"); 
+    function InputAge(uint256 age) public { 
+        require(age > 0, "That is an invalid age."); 
 
-        balance -= _amount; 
-       
-        assert(_amount <= MAX_UINT); 
-
-      
-        if (balance > _amount) {
-            revert("The amount withdrawal exceeds to the balance"); 
+        if (age < legalDrinkingAge) { 
+            emit PurchaseAttempt(msg.sender, age, false); 
+            revert("Purchase denied. You must be at least 18 years old!");
         }
+        
+        emit PurchaseAttempt(msg.sender, age, true);
+        
     }
 }
